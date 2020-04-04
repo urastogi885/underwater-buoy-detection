@@ -24,7 +24,8 @@ pip3 install numpy opencv-python
 - Check if your system successfully installed all the dependencies
 - Open terminal using ```Ctrl+Alt+T``` and enter ```python3```.
 - The terminal should now present a new area represented by ```>>>``` to enter python commands
-- Now use the following commands to check libraries: (Exit python window using ```Ctrl + Z``` if an error pops up while running the below commands)
+- Now use the following commands to check libraries: (Exit python window using ```Ctrl + Z``` if an error pops up while
+running the below commands)
 
 ```
 import tkinter
@@ -40,7 +41,20 @@ import cv2
 ```
 https://github.com/urastogi885/underwater-buoy-detection
 cd underwater-buoy-detection/Code
-python3 buoy_detection.py
+python3 buoy_detection.py input_video_location dataset_location output_destination
 ```
 
-- An image window will pop-up, close this window, and press ```Ctrl + Z``` to stop the execution of the program.
+- Remember *input_video_location, dataset_location, output_destination* are file locations. The program takes these
+locations relative to its own location.
+- It is recommended that you provide locations within the project structure otherwise it will become too cumbersome for
+you to reference the correct location of the file.
+- Here is an example:
+
+```
+python3 buoy_detection.py videos/detectbuoy.avi images videos/video_output.avi
+```
+
+- The above file/folder locations are within the *Code* directory. Any other location within *Code* folder can be
+referenced in the same way.
+- Any location at the level of the *Code* folder can be referenced using *../file-name* for Ubuntu users. This is the
+standard way of providing relative locations on linux terminals.
