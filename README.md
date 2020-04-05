@@ -5,6 +5,15 @@
 
 Detection of buoys using gaussian mixture models (GMMs)
 
+## Todo
+
+- Update readme
+- Add readme images
+- Improve final video output
+- Start writing report
+- Verify histogram and 1D-gaussian output
+- Remove this section before submission
+
 ## Dependencies
 
 - Python3
