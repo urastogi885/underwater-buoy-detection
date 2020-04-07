@@ -1,35 +1,28 @@
 import numpy as np
+from math import sqrt
+from scipy.stats import norm
 import matplotlib.pyplot as plt
 
 
-def gaussian(x_data, means, covariances):
+def gaussian(x_data, means, cov):
     """
 
     :param x_data:
     :param means:
-    :param covariances:
+    :param cov:
     :return:
     """
     data_size = means.shape[0]
     x_hat = (x_data - means).reshape((-1, 1, data_size))
     cov_inv = None
-    if np.linalg.det(covariances) == 0:
-        cov_inv = np.linalg.pinv(covariances)
+    if np.linalg.det(cov) == 0:
+        cov_inv = np.linalg.pinv(cov)
     else:
-        cov_inv = np.linalg.inv(covariances)
+        cov_inv = np.linalg.inv(cov)
     fac = np.einsum('...k,kl,...l->...', x_hat, cov_inv, x_hat)
-    return np.exp(-fac / 2) / (np.sqrt((2 * np.pi) ** data_size * np.linalg.det(covariances)))
-
-
-def generate_data(means, covariances, data_size):
-    """
-
-    :param means:
-    :param covariances:
-    :param data_size:
-    :return:
-    """
-    return np.random.multivariate_normal(means, covariances, data_size)
+    # (1 / (cov * sqrt(2 * np.pi))) * np.exp(-np.power(x_hat, 2.) / (2 * np.power(cov, 2.)))
+    # np.exp(-fac / 2) / (np.sqrt((2 * np.pi) ** data_size * np.linalg.det(cov)))
+    return np.exp(-fac / 2) / (np.sqrt((2 * np.pi) ** data_size * np.linalg.det(cov)))
 
 
 # Define class to build a custom gaussian mixture model
@@ -123,59 +116,3 @@ class GaussianMixture:
         for k in range(self.clusters):
             pdf += self.weight[k] * gaussian(x_data, self.mean[k], self.cov[k]).reshape((-1))
         return pdf
-
-"""
-if __name__ == "__main__":
-    #  Gaussian model: [mean, cov]
-    G1 = [np.array([0, 1]), np.identity(2) * 0.2]
-    G2 = [np.array([4, 5]), np.identity(2) * 0.1]
-    G_list = [G1, G2]
-    # Define the number of clusters
-    K = len(G_list)
-    # Generate training data
-    data_list = [generate_data(G_list[k][0], G_list[k][1], 100) for k in range(K)]  # K*dataNum*dim
-    data = np.concatenate(data_list)  # dataNum*dim
-    #  Mixture Gaussian model
-    n_iterations = 50
-    mix = GaussianMixture(data, len(G_list))
-    # [mix.train() for i in range(n_iterations)]
-    for i in range(n_iterations):
-        print("number of iterations: ", i)
-        mix.train()
-        mean, var, _ = mix.get_model()
-
-        #  Plot results dynamically
-        plt.figure(1)
-        plt.plot(data[:, 0], data[:, 1], '.')
-        circle = []
-        for k in range(K):
-            circle.append(plt.Circle(mean[k], np.sqrt(var[k][0, 0]), edgecolor='r', facecolor='none'))
-            plt.gcf().gca().add_artist(circle[k])
-        plt.pause(0.1)
-        plt.clf()
-
-    #  Plot final results
-    plt.close()
-    plt.figure(1)
-    plt.plot(data[:, 0], data[:, 1], '.')
-    circle = []
-    for k in range(K):
-            circle.append(plt.Circle(mean[k], np.sqrt(var[k][0, 0]), edgecolor='r', facecolor='none'))
-        plt.gcf().gca().add_artist(circle[k])
-
-    #  Generate ground truth
-    # x_gt = np.linspace(-10, 15, 300)
-    # y_gt_list = [gaussian(x_gt, G_list[k][0], G_list[k][1]) for k in range(K)]
-    # y_gt = sum(y_gt_list)/K
-
-    # plt.figure()
-    # plt.plot(x_gt, y_gt_list)
-
-    #  Plot results
-    plt.figure(2)
-    data = np.sort(data, axis=0)
-    prob = mix.get_pdf(data)
-    print(data.shape)
-    plt.plot(data, prob, '.')
-    plt.show()
-"""
