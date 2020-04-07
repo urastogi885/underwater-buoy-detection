@@ -10,9 +10,9 @@ if __name__ == '__main__':
     video_format = cv2.VideoWriter_fourcc('X', 'V', 'I', 'D')
     video_output = cv2.VideoWriter(str(output_destination), video_format, 20.0, (640, 480))
     # Train GMM models for various buoys
-    yellow_gmm = color_segmentation.gmm_train(str(dataset_location) + 'Yellow', 1, 50)
-    green_gmm = color_segmentation.gmm_train(str(dataset_location) + 'Green', 1, 50)
-    orange_gmm = color_segmentation.gmm_train(str(dataset_location) + 'Orange', 4, 200)
+    yellow_gmm = color_segmentation.gmm_train(str(dataset_location) + 'yellow_unmasked/train/', 1, 50)
+    green_gmm = color_segmentation.gmm_train(str(dataset_location) + 'green_unmasked/train/', 1, 50)
+    orange_gmm = color_segmentation.gmm_train(str(dataset_location) + 'orange_unmasked/train/', 4, 200)
     # Start iterating over each video frame
     while True:
         video_frame_exists, img = video.read()
@@ -34,7 +34,7 @@ if __name__ == '__main__':
         img_thresh_slack = [y_img_thresh_slack, g_img_thresh_slack, o_img_thresh_slack]
 
         #  Find bounding box
-        color = [(0, 255, 255), (0, 255, 0), (0, 0, 255)]
+        color = (0, 255, 0)
         img_total = [img.copy(), img.copy(), img.copy()]
         img_show = []
         for i in range(len(seg)):
@@ -67,12 +67,8 @@ if __name__ == '__main__':
                         (x, y), radius = cv2.minEnclosingCircle(cnt)
                         center = (int(x), int(y))
                         radius = int(radius)
-                cv2.circle(img_result, center, radius, color[i], 2)
+                cv2.circle(img_result, center, radius, color, 2)
 
-        # cv2.imshow("Result", img_result)
-        # key = cv2.waitKey(1)
-        # if key == 27:
-        #     break
         video_output.write(img_result)
     # Destroy all open-cv windows
     video.release()
